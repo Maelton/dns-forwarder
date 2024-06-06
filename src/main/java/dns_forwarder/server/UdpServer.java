@@ -48,6 +48,13 @@ public class UdpServer {
         }
     }
 
+    public void closeServerSocket() {
+        if(socket != null && !socket.isClosed()) {
+            socket.close();
+            System.out.println("Server has stopped!");
+        }
+    }
+
     public void run() {
         createServerSocket();
         if(socket != null) {
@@ -64,6 +71,6 @@ public class UdpServer {
     }
 
     public void processPacket(DatagramPacket packet) {
-        System.out.println(packet);
+        System.out.println(new String(packet.getData(), 0, packet.getLength()));
     }
 }

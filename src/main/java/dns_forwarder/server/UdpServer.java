@@ -1,5 +1,5 @@
 package dns_forwarder.server;
-
+import dns_forwarder.dns_message.DnsMessage;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
@@ -64,6 +64,8 @@ public class UdpServer {
     }
 
     public void processPacket(DatagramPacket packet) {
-        System.out.println(packet);
+        DnsMessage dnsMessage = new DnsMessage(packet);
+        dnsMessage.extractQuestionSection(packet);
+        // System.out.println(packet);
     }
 }

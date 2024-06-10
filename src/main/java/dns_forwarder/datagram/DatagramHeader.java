@@ -88,9 +88,7 @@ public class DatagramHeader {
      *     |                    ARCOUNT                    |
      *     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
      */
-    //TO BE TESTED
     public DatagramHeader(DatagramPacket p) {
-
         this.id = ((p.getData()[0] & 255) << 8) | (p.getData()[1] & 255);
 
         this.qr = (p.getData()[2] >> 7) & 1;
@@ -104,8 +102,8 @@ public class DatagramHeader {
         this.rcode = p.getData()[3] & 15;;
 
         this.qdcount = ((p.getData()[4] & 255) << 8) | (p.getData()[5] & 255);
-        this.ancount = ((p.getData()[6] & 255) << 8) | (p.getData()[7] & 255);;
-        this.nscount = ((p.getData()[8] & 255) << 8) | (p.getData()[9] & 255);;
-        this.arcount = ((p.getData()[10] & 255) << 8) | (p.getData()[11] & 255);;
+        this.ancount = ((p.getData()[6] & 255) << 8) | (p.getData()[7] & 255);
+        this.nscount = ((p.getData()[8] & 255) << 8) | (p.getData()[9] & 255);
+        this.arcount = ((p.getData()[10] & 255) << 8) | (p.getData()[11] & 255);
     }
 }

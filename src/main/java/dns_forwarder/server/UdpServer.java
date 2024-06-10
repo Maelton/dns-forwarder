@@ -65,7 +65,7 @@ public class UdpServer {
 
     public void processPacket(DatagramPacket packet) {
         DnsMessage dnsMessage = new DnsMessage(packet);
-        dnsMessage.extractQuestionSection(packet);
+        dnsMessage.extractQuestionSection();
         // System.out.println(packet);
     }
 }

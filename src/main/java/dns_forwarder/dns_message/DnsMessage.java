@@ -10,12 +10,13 @@ public class DnsMessage {
         this.packet = packet;
     }
 
-    public void extractQuestionSection(DatagramPacket packet){
-        QuestionSection qSection = new QuestionSection(packet);
+    public void extractQuestionSection(){
+        QuestionSection qSection = new QuestionSection(this.packet);
         qSection.buildQuestionSection();
         System.out.println("Questions - name:" + qSection.getQName() +
                             " type:" + qSection.getQType() +
                             " class:" + qSection.getQClass());
+        this.questionSection = qSection;
     }
 
 }

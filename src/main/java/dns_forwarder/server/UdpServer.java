@@ -1,7 +1,7 @@
 package dns_forwarder.server;
 
+import dns_forwarder.dns_message.DnsMessage;
 import dns_forwarder.datagram.DatagramHeader;
-
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
@@ -90,5 +90,8 @@ public class UdpServer {
         System.out.println("ANCOUNT: " + packetHeader.getAncount());
         System.out.println("NSCOUNT: " + packetHeader.getNscount());
         System.out.println("ARCOUNT: " + packetHeader.getArcount());
+
+        DnsMessage dnsMessage = new DnsMessage(packet);
+        dnsMessage.extractQuestionSection();
     }
 }

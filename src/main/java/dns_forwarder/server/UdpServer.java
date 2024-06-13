@@ -1,7 +1,7 @@
 package dns_forwarder.server;
 
-import dns_forwarder.dns_message.DnsMessage;
-import dns_forwarder.datagram.DatagramHeader;
+import dns_forwarder.datagram.DatagramDeserializer;
+
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
@@ -73,25 +73,6 @@ public class UdpServer {
     }
 
     public void processPacket(DatagramPacket packet) {
-        DatagramHeader packetHeader = new DatagramHeader(packet);
-        System.out.println("ID: " + packetHeader.getId());
-
-        System.out.println("QR: " + packetHeader.getQr());
-        System.out.println("OPCODE: " + packetHeader.getOpcode());
-        System.out.println("AA: " + packetHeader.getAa());
-        System.out.println("TC: " + packetHeader.getTc());
-        System.out.println("RD: " + packetHeader.getRd());
-
-        System.out.println("RA: " + packetHeader.getRa());
-        System.out.println("Z: " + packetHeader.getZ());
-        System.out.println("RCODE: " + packetHeader.getRcode());
-
-        System.out.println("QDCOUNT: " + packetHeader.getQdcount());
-        System.out.println("ANCOUNT: " + packetHeader.getAncount());
-        System.out.println("NSCOUNT: " + packetHeader.getNscount());
-        System.out.println("ARCOUNT: " + packetHeader.getArcount());
-
-        DnsMessage dnsMessage = new DnsMessage(packet);
-        dnsMessage.extractQuestionSection();
+        System.out.println(new DatagramDeserializer(packet));
     }
 }

@@ -18,5 +18,6 @@ public class Main {
             server = new UdpServer();
         server.run();
         server.closeServerSocket();
+        server.closeForwardingSocket();
     }
 }

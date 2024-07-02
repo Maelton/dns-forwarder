@@ -4,12 +4,17 @@ import dns_forwarder.datagram.DatagramDeserializer;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 
 public class UdpServer {
 
     private final int DEFAULT_PORT = 1056;
     private int port;
     private DatagramSocket socket;
+    private DatagramSocket forwardingSocket;
+
+    private String GOOGLE_DNS_ADDRESS = "8.8.8.8";
+    private int GOOGLE_DNS_PORT = 53;
 
     public UdpServer() {
         port = DEFAULT_PORT;
@@ -59,12 +64,14 @@ public class UdpServer {
 
     public void run() {
         createServerSocket();
-        if(socket != null) {
+        createForwardingSocket();
+
+        if(socket != null & forwardingSocket != null) {
             while(true) {
                 DatagramPacket packet = new DatagramPacket(new byte[1024], 1024);
                 try {
                     socket.receive(packet);
-                    processPacket(packet);
+                    forwardPacket(packet);
                 } catch(Exception e) {
                     System.out.println("Could not receive packet: " + e.getMessage());
                 }
@@ -72,7 +79,41 @@ public class UdpServer {
         }
     }
 
-    public void processPacket(DatagramPacket packet) {
-        System.out.println(new DatagramDeserializer(packet));
+    public void createForwardingSocket() {
+        try {
+            forwardingSocket = new DatagramSocket();
+        } catch (Exception e) {
+            System.out.println("Could not create forwarding socket: " + e.getMessage());
+        }
+    }
+
+    public void closeForwardingSocket() {
+        if(forwardingSocket != null && !forwardingSocket.isClosed())
+            forwardingSocket.close();
+    }
+
+    public void forwardPacket(DatagramPacket receivedPacket) {
+        DatagramPacket packet = null;
+
+        try {
+            packet = new DatagramPacket(receivedPacket.getData(),
+                    receivedPacket.getLength(),
+                    InetAddress.getByName(GOOGLE_DNS_ADDRESS), GOOGLE_DNS_PORT);
+        } catch (Exception e) {
+            System.out.println("Packet exception: " + e.getMessage());
+        }
+
+        try {
+            if(packet != null) {
+                forwardingSocket.send(packet);
+                System.out.println("Forwarded packet to " + GOOGLE_DNS_ADDRESS + ":" + GOOGLE_DNS_PORT);
+
+                DatagramPacket responsePacket = new DatagramPacket(new byte[1024], 1024);
+                forwardingSocket.receive(responsePacket);
+                System.out.println(new DatagramDeserializer(responsePacket));
+            }
+        } catch(Exception e) {
+            System.out.println("Could not forward packet: " + e.getMessage());
+        }
     }
 }

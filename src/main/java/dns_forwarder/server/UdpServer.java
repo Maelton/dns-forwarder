@@ -1,7 +1,9 @@
 package dns_forwarder.server;
 
+import dns_forwarder.client.ClientApplication;
 import dns_forwarder.datagram.DatagramDeserializer;
 
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -15,6 +17,8 @@ public class UdpServer {
 
     private String GOOGLE_DNS_ADDRESS = "8.8.8.8";
     private int GOOGLE_DNS_PORT = 53;
+
+    private ClientApplication clientHost;
 
     public UdpServer() {
         port = DEFAULT_PORT;
@@ -95,6 +99,7 @@ public class UdpServer {
     public void forwardPacket(DatagramPacket receivedPacket) {
         DatagramPacket packet = null;
 
+        clientHost = new ClientApplication(receivedPacket.getPort(), receivedPacket.getAddress());
         try {
             packet = new DatagramPacket(receivedPacket.getData(),
                     receivedPacket.getLength(),
@@ -111,9 +116,17 @@ public class UdpServer {
                 DatagramPacket responsePacket = new DatagramPacket(new byte[1024], 1024);
                 forwardingSocket.receive(responsePacket);
                 System.out.println(new DatagramDeserializer(responsePacket));
+                sendResponseClient(responsePacket);
             }
         } catch(Exception e) {
             System.out.println("Could not forward packet: " + e.getMessage());
         }
+    }
+
+    public void sendResponseClient(DatagramPacket responseForwarderPacket) throws IOException {
+        DatagramPacket responseClientPacket = new DatagramPacket(responseForwarderPacket.getData(),
+                                        responseForwarderPacket.getLength(),
+                                        clientHost.getIp(), clientHost.getPort());
+        socket.send(responseClientPacket);
     }
 }

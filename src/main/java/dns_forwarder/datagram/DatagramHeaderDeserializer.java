@@ -96,6 +96,11 @@ public class DatagramHeaderDeserializer {
      *     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
      */
     public DatagramHeaderDeserializer(DatagramPacket p) {
+
+        if (p.getLength() < 12) {
+            throw new IllegalArgumentException("Packet too short for DNS header");
+        }
+
         this.ID = ((p.getData()[0] & 255) << 8) | (p.getData()[1] & 255);
 
         this.QR = (p.getData()[2] >> 7) & 1;
